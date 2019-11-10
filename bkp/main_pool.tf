@@ -70,37 +70,39 @@ module "gke_cluster" {
 
 }
 
-# configure kubectl with the credentials of the GKE cluster
-resource "null_resource" "configure_kubectl" {
-  provisioner "local-exec" {
-    command = "gcloud beta container clusters get-credentials ${module.gke_cluster.name} --region ${var.location} --project ${var.project}"
 
-    # Use environment variables to allow custom kubectl config paths
-    environment = {
-      KUBECONFIG = var.kubectl_config_path != "" ? var.kubectl_config_path : ""
-    }
-  }
+# ------------------------------------------------------------------------------
+# CREATE A NODE POOL
+# ------------------------------------------------------------------------------
 
-  depends_on = [module.gke_cluster]
-}
+resource "google_container_node_pool" "node_pool" {
+  provider = google-beta
 
-resource "kubernetes_pod" "nginx" {
-  metadata {
-    name = "nginx-example"
+  name     = "main-pool"
+  project  = var.project
+  location = var.location
+  cluster  = module.gke_cluster.name
+
+  initial_node_count = "1"
+  node_config {
+    image_type   = "COS"
+    machine_type = "n1-standard-1"
+
+    disk_size_gb = "30"
+    disk_type    = "pd-standard"
+#    preemptible  = false
+
+#    service_account = google_service_account.cluster_service_account.email
+
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
+
     labels = {
-      App = "nginx"
+      system = "monitoring"
     }
+
+    tags = ["dev", "work", "epam", "vpn"]
   }
 
-  spec {
-    container {
-      image = "nginx:1.7.8"
-      name  = "example"
-
-      port {
-        container_port = 80
-      }
-    }
-  }
-  depends_on = [module.gke_cluster]
 }
