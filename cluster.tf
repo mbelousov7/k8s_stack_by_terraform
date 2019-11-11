@@ -1,9 +1,11 @@
+
+# ---------------------------------------------------------------------------------------------------------------------
+# DEPLOY A PRIVATE CLUSTER IN GOOGLE CLOUD PLATFORM
+# ---------------------------------------------------------------------------------------------------------------------
+
 resource "google_container_cluster" "cluster" {
-  provider = "google-beta"
-
-  name        = var.name
+  name        = var.cluster_name
   description = var.description
-
   project    = var.project
   location   = var.location
 
@@ -24,10 +26,10 @@ resource "google_container_cluster" "cluster" {
 #    preemptible  = false
 #    service_account = google_service_account.cluster_service_account.email
 
-  oauth_scopes = [
-    "https://www.googleapis.com/auth/compute",
-    "https://www.googleapis.com/auth/devstorage.read_only",
-  ]
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+    ]
 
     labels = {
       system = "laba"

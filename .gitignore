@@ -7,3 +7,9 @@
 
 # .tfvars files
 *.tfvars
+
+# Local bkp
+local_bkp
+
+#macOS
+.DS_Store
