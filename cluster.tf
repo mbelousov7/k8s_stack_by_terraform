@@ -32,7 +32,7 @@ resource "google_container_cluster" "cluster" {
     ]
 
     labels = {
-      system = "laba"
+      pool = "init"
     }
 
     tags = ["dev", "work", "epam", "vpn"]
@@ -43,9 +43,9 @@ resource "google_container_cluster" "cluster" {
       disabled = ! var.http_load_balancing
     }
 
-    kubernetes_dashboard {
-      disabled = ! var.enable_kubernetes_dashboard
-    }
+#    kubernetes_dashboard {
+#      disabled = ! var.enable_kubernetes_dashboard
+#    }
 
   }
 
@@ -58,5 +58,33 @@ resource "google_container_cluster" "cluster" {
     client_certificate_config {
       issue_client_certificate = false
     }
+  }
+}
+
+resource "google_container_node_pool" "node_pool_main" {
+  name       = "node-pool-main"
+  location   = var.location
+  cluster    = google_container_cluster.cluster.name
+  node_count = 1
+
+  node_config {
+    image_type   = "COS"
+    machine_type = "n1-standard-1"
+
+    disk_size_gb = "30"
+    disk_type    = "pd-standard"
+
+    preemptible  = true
+
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+    ]
+
+    labels = {
+      pool = "main"
+    }
+
+    tags = ["dev", "work", "epam", "vpn"]
   }
 }

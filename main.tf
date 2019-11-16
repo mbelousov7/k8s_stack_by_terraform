@@ -34,7 +34,7 @@ provider "helm" {
   install_tiller  = true
   service_account = "tiller"
   namespace       = "kube-system"
-  
+
   kubernetes {
     host                   = "${google_container_cluster.cluster.endpoint}"
     token                  = "${data.google_client_config.client.access_token}"
@@ -83,5 +83,10 @@ resource "null_resource" "configure_kubectl" {
     }
   }
 
-  depends_on = [google_container_cluster.cluster]
+  depends_on = [
+    google_container_cluster.cluster,
+    google_container_node_pool.node_pool_main,
+    kubernetes_service_account.tiller,
+    kubernetes_cluster_role_binding.tiller
+  ]
 }

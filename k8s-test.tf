@@ -3,7 +3,7 @@ resource "kubernetes_namespace" "laba" {
     name = "laba"
   }
 }
-
+#pod tests
 resource "kubernetes_pod" "nginx" {
   metadata {
     name = "nginx-example"
@@ -23,13 +23,73 @@ resource "kubernetes_pod" "nginx" {
       }
     }
   }
-  depends_on = [google_container_cluster.cluster]
+  depends_on = [null_resource.configure_kubectl]
 }
 
 
-
+#helm test
 resource "helm_release" "nginx-helm" {
   name  = "nginx-helm"
   chart = "bitnami/nginx"
   namespace = "laba"
+  depends_on = [null_resource.configure_kubectl]
+}
+
+#ingress test
+resource "kubernetes_ingress" "example_ingress" {
+  metadata {
+    name = "example-ingress"
+    namespace = "laba"
+  }
+
+  spec {
+    rule {
+      http {
+        path {
+          backend {
+            service_name = "example-service"
+            service_port = 8080
+          }
+
+          path = "/"
+        }
+      }
+    }
+
+  }
+}
+
+resource "kubernetes_service" "example" {
+  metadata {
+    name = "example-service"
+    namespace = "laba"
+  }
+  spec {
+    selector = {
+      app = "${kubernetes_pod.example.metadata.0.labels.app}"
+    }
+    session_affinity = "ClientIP"
+    port {
+      port        = 8080
+      target_port = 80
+    }
+
+    type = "LoadBalancer"
+  }
+}
+
+resource "kubernetes_pod" "example" {
+  metadata {
+    name = "example-pod"
+    labels = {
+      app = "myapp"
+    }
+  }
+
+  spec {
+    container {
+      image = "nginx:1.7.9"
+      name  = "example"
+    }
+  }
 }

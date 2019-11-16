@@ -31,3 +31,6 @@ gcloud services enable servicemanagement.googleapis.com
 
 
 gcloud beta container clusters get-credentials example-cluster --region us-east1-b --project terraform3-258612
+
+
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
