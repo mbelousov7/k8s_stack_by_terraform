@@ -8,7 +8,7 @@ resource "google_container_cluster" "cluster" {
   description = var.description
   project    = var.project
   location   = var.location
-
+  min_master_version = var.kubernetes_version
 
   logging_service    = var.logging_service
   monitoring_service = var.monitoring_service

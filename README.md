@@ -9,8 +9,6 @@ terraform playbooks for gcp, k8s, prometheus, grafana
 PROJECT=YOUR_PROJECT
 gcloud config set project ${PROJECT}
 
-PROJECT=terraform2-258610
-gcloud config set project ${PROJECT}
 2. Configure the environment for Terraform:
 [[ $CLOUD_SHELL ]] || gcloud auth application-default login
 export GOOGLE_PROJECT=$(gcloud config get-value project)

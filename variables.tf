@@ -31,7 +31,7 @@ variable "kubectl_config_path" {
 variable "cluster_name" {
   description = "The name of the Kubernetes cluster."
   type        = string
-  default     = "example-cluster"
+  default     = "terraform"
 }
 
 variable "cluster_service_account_name" {
