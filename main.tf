@@ -2,23 +2,9 @@ terraform {
   required_version = ">= 0.12.13"
 }
 
-provider "google" {
-  project = var.project
-  region  = var.location
-
-  scopes = [
-    # Default scopes
-    "https://www.googleapis.com/auth/compute",
-    "https://www.googleapis.com/auth/cloud-platform",
-    "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-    "https://www.googleapis.com/auth/devstorage.full_control",
-
-    # Required for google_client_openid_userinfo
-    "https://www.googleapis.com/auth/userinfo.email",
-  ]
-}
 
 data "google_client_config" "client" {}
+
 
 provider "kubernetes" {
   version = "~> 1.7.0"
@@ -43,6 +29,7 @@ provider "helm" {
     cluster_ca_certificate = "${base64decode(google_container_cluster.cluster.master_auth.0.cluster_ca_certificate)}"
   }
 }
+
 
 resource "kubernetes_service_account" "tiller" {
   metadata {
@@ -89,4 +76,18 @@ resource "null_resource" "configure_kubectl" {
     kubernetes_service_account.tiller,
     kubernetes_cluster_role_binding.tiller
   ]
+}
+module "helm_ingress" {
+  source = "./modules/helm_ingress"
+}
+
+module "helm_loki" {
+  source = "./modules/helm_loki"
+}
+
+module "helm_prometheus_operator" {
+  source = "./modules/helm_prometheus"
+  grafana_hostname = var.grafana_hostname
+  grafana_password = var.grafana_password
+  helm_prometheus_version = var.helm_prometheus_version
 }

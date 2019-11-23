@@ -146,7 +146,7 @@ alertmanager:
   #           {{ end }}
 
   ingress:
-    enabled: false
+    enabled: true
 
     annotations: {}
 
@@ -154,8 +154,8 @@ alertmanager:
 
     ## Hosts must be provided if Ingress is enabled.
     ##
-    hosts: []
-      # - alertmanager.domain.com
+    hosts:
+       - alertmanager.terraformk8s.com
 
     ## Paths to use for ingress rules - one path should match the alertmanagerSpec.routePrefix
     ##
@@ -377,7 +377,7 @@ grafana:
   ##
   defaultDashboardsEnabled: true
 
-  adminPassword: P@S$dql;p
+  adminPassword: ${grafana_password}
   service:
     annotations: {}
     labels: {}
@@ -403,13 +403,13 @@ grafana:
     loadBalancerSourceRanges: []
     ## Service type
     ##
-    type: LoadBalancer
+  ###DDDDD  type: ClusterIP
 
     sessionAffinity: ""
   ingress:
     ## If true, Grafana Ingress will be created
     ##
-    enabled: false
+    enabled: true
 
     ## Annotations for Grafana Ingress
     ##
@@ -426,7 +426,8 @@ grafana:
     ##
     # hosts:
     #   - grafana.domain.com
-    hosts: []
+    hosts:
+        - ${grafana_hostname}
 
     ## Path for grafana ingress
     path: /
@@ -1261,7 +1262,7 @@ prometheus:
     maxUnavailable: ""
 
   ingress:
-    enabled: false
+    enabled: true
     annotations: {}
     labels: {}
 
@@ -1270,7 +1271,8 @@ prometheus:
     ##
     # hosts:
     #   - prometheus.domain.com
-    hosts: []
+    hosts:
+        - prometheus.terraformk8s.com
 
     ## Paths to use for ingress rules - one path should match the prometheusSpec.routePrefix
     ##

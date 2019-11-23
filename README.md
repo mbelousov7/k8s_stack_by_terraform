@@ -3,6 +3,15 @@ terraform playbooks for gcp, k8s, prometheus, grafana
 
 
 ##Set up the environment
+1.  GCP auth
+gcloud auth application-default login
+
+2. Init terraform
+make init
+
+3. Plan
+
+make plan
 
 1. Set the project, replace YOUR_PROJECT with your project ID:
 

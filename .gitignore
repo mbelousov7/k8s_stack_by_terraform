@@ -6,7 +6,10 @@
 *.tfstate.*
 
 # .tfvars files
-*.tfvars
+
+#.env
+.env
+.export
 
 # Local bkp
 local_bkp
