@@ -45,10 +45,17 @@ gcloud services enable compute.googleapis.com
 # Run
 terraform init
 terraform apply -var-file=terraform.tfvars
-terraform destroy -target=module.helm_prometheus,module.helm_loki,module.helm_ingress & terraform destroy
+
+#Clear
+terraform destroy -auto-approve \
+ -target=module.helm_prometheus \
+ -target=module.helm_loki \
+ -target=module.helm_ingress
+
+terraform destroy -auto-approve
 
 #To do
 1. Makefile
-2. modules dependings
-3. create file yaml after destroy
-4. module for gke project, account etc
+2. modules depending
+3. module for gke project, account etc
+4. add grafana ds using provider

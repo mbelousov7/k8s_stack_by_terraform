@@ -22,7 +22,6 @@ provider "google" {
 
 data "google_client_config" "current" {}
 
-
 provider "kubernetes" {
   version = "~> 1.7.0"
   load_config_file       = false
@@ -30,6 +29,12 @@ provider "kubernetes" {
   token                  = data.google_client_config.current.access_token
   cluster_ca_certificate = base64decode(google_container_cluster.cluster.master_auth[0].cluster_ca_certificate)
 }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# DEPLOY A PRIVATE CLUSTER IN GOOGLE CLOUD PLATFORM
+# ---------------------------------------------------------------------------------------------------------------------
+
+
 
 module "helm_init" {
   source = "./modules/helm_init"
@@ -64,7 +69,6 @@ resource "null_resource" "configure_kubectl" {
 
   depends_on = [
     google_container_cluster.cluster,
-    google_container_node_pool.node_pool_main,
     module.helm_init
   ]
 }
@@ -81,5 +85,5 @@ module "helm_prometheus" {
   source = "./modules/helm_prometheus"
   grafana_hostname = var.grafana_hostname
   grafana_password = var.grafana_password
-  helm_prometheus_version = var.helm_prometheus_version
+#  helm_prometheus_version = var.helm_prometheus_version
 }

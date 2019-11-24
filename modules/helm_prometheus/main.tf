@@ -8,12 +8,12 @@ data "template_file" "prometheus_helm_values_tmpl" {
     }
 }
 
-resource "local_file" "prometheus_helm_values" {
-    content = "${data.template_file.prometheus_helm_values_tmpl.rendered}"
-    filename = "${path.module}/resources/prometheus-operator.values.yaml"
-    depends_on = [data.template_file.prometheus_helm_values_tmpl]
+#resource "local_file" "prometheus_helm_values" {
+#    content = "${data.template_file.prometheus_helm_values_tmpl.rendered}"
+#    filename = "${path.module}/resources/prometheus-operator.values.yaml"
+#    depends_on = [data.template_file.prometheus_helm_values_tmpl]
 
-}
+#}
 
 resource "helm_release" "prometheus-operator" {
     name  = "prom"
@@ -23,7 +23,8 @@ resource "helm_release" "prometheus-operator" {
     namespace = "monitoring"
 
     values = [
-      "${file("${path.module}/resources/prometheus-operator.values.yaml")}"
+       "${data.template_file.prometheus_helm_values_tmpl.rendered}"
+    #  "${file("${path.module}/resources/prometheus-operator.values.yaml")}"
     ]
-    depends_on = [local_file.prometheus_helm_values]
+
  }

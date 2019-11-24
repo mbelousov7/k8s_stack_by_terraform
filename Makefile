@@ -1,5 +1,7 @@
 include .env
 
+export TF_ADMIN
+export TF_CREDS
 export TF_VAR_project
 export TF_VAR_location
 export TF_VAR_kubernetes_version
@@ -17,4 +19,5 @@ plan:
 	terraform plan -var-file=terraform.tfvars
 
 destroy:
-	terraform destroy -auto-approve -target=module.helm_prometheus -target=module.helm_loki -target=module.helm_ingress & terraform destroy -auto-approve
+	terraform destroy -auto-approve -target=module.helm_prometheus -target=module.helm_loki -target=module.helm_ingress
+	terraform destroy -auto-approve
