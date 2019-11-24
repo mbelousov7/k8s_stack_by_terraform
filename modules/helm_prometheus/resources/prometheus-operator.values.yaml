@@ -195,6 +195,7 @@ alertmanager:
     ## Service type
     ##
     type: ClusterIP
+    #type: LoadBalancer
 
   ## If true, create a serviceMonitor for alertmanager
   ##

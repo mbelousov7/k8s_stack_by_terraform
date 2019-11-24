@@ -11,6 +11,9 @@
 .env
 .export
 
+#credentials
+terraform-admin.json
+
 # Local bkp
 local_bkp
 

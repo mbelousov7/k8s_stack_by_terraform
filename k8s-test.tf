@@ -26,15 +26,6 @@ resource "kubernetes_pod" "nginx" {
   depends_on = [null_resource.configure_kubectl]
 }
 
-
-#helm test
-resource "helm_release" "nginx-helm" {
-  name  = "nginx-helm"
-  chart = "bitnami/nginx"
-  namespace = "laba"
-  depends_on = [null_resource.configure_kubectl]
-}
-
 #ingress test
 resource "kubernetes_ingress" "example_ingress" {
   metadata {
@@ -74,7 +65,7 @@ resource "kubernetes_service" "example" {
       target_port = 80
     }
 
-#    type = "ClusterIP"
+    type = "LoadBalancer"
   }
 }
 

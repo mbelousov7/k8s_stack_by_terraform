@@ -26,10 +26,16 @@ variable "location" {
   type        = string
 }
 
+variable "file_account" {
+  description = "The location file_account"
+  type        = string
+}
+
 
 # ------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # ------------------------------------------------------------------------------
+
 
 variable "service_account_iam_roles" {
   type = list(string)
@@ -41,11 +47,6 @@ variable "service_account_iam_roles" {
   description = "List of IAM roles to assign to the service account."
 }
 
-variable "service_account_custom_iam_roles" {
-  type        = list(string)
-  default     = []
-  description = "List of arbitrary additional IAM roles to attach to the service account on the Vault nodes."
-}
 
 variable "project_services" {
   type = list(string)

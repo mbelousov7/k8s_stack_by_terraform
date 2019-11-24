@@ -1,45 +1,54 @@
 # terraform stack
-terraform playbooks for gcp, k8s, prometheus, grafana
+terraform playbooks for gcp, k8s, prometheus, loki, grafana
 
 
-##Set up the environment
+##Set up the GCP environment
 1.  GCP auth
 gcloud auth application-default login
 
-2. Init terraform
-make init
+2. Create a new project
 
-3. Plan
+export TF_VAR_billing_account=YOUR_BILLING_ACCOUNT_ID
+export TF_ADMIN=${USER}-terraform
+export TF_CREDS=terraform-admin.json
+gcloud projects create ${TF_ADMIN} \
+  --set-as-default
+gcloud beta billing projects link ${TF_ADMIN} \
+  --billing-account ${TF_VAR_billing_account}
 
-make plan
+- Note you can find OUR_BILLING_ACCOUNT_ID by run
 
-1. Set the project, replace YOUR_PROJECT with your project ID:
+gcloud alpha billing accounts list
 
-PROJECT=YOUR_PROJECT
-gcloud config set project ${PROJECT}
+3. Create the Terraform service account
+gcloud iam service-accounts create terraform \
+  --display-name "Terraform admin account"
 
-2. Configure the environment for Terraform:
-[[ $CLOUD_SHELL ]] || gcloud auth application-default login
-export GOOGLE_PROJECT=$(gcloud config get-value project)
-3. Create the terraform.tfvars file:
+gcloud iam service-accounts keys create ${TF_CREDS} \
+  --iam-account terraform@${TF_ADMIN}.iam.gserviceaccount.com
 
-cat > terraform.tfvars <<EOF
-helm_version = "$(helm version -c --short | egrep -o 'v[0-9]*.[0-9]*.[0-9]*')"
-acme_email = "$(gcloud config get-value account)"
-EOF
+4. Grant the service account permission
+gcloud projects add-iam-policy-binding ${TF_ADMIN} \
+  --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
+  --role roles/owner
 
-cat terraform.tfvars
-**
+5. Any actions that Terraform performs require that the API be enabled to do so. In this guide, Terraform requires the following:
 
-#Enable service management API
+gcloud services enable cloudkms.googleapis.com
+gcloud services enable cloudresourcemanager.googleapis.com
+gcloud services enable iam.googleapis.com
+gcloud services enable logging.googleapis.com
+gcloud services enable monitoring.googleapis.com
+gcloud services enable container.googleapis.com
+gcloud services enable compute.googleapis.com
 
-This example creates a Cloud Endpoints service and requires that the Service Manangement API is enabled.
+# Run
+terraform init
+terraform apply -var-file=terraform.tfvars
+terraform destroy -target=module.helm_prometheus,module.helm_loki,module.helm_ingress & terraform destroy
 
-1. Enable the Service Management API:
-gcloud services enable servicemanagement.googleapis.com
-
-
-gcloud beta container clusters get-credentials example-cluster --region us-east1-b --project terraform3-258612
-
-
-kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
+#To do
+1. Makefile
+2. modules dependings
+3. create file yaml after destroy
+4. module for gke project, account etc

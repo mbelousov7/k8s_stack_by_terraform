@@ -1,6 +1,6 @@
 
 
-resource "template_file" "prometheus_helm_values_tmpl" {
+data "template_file" "prometheus_helm_values_tmpl" {
     template = "${file("${path.module}/resources/prometheus-operator.values-tmpl.yaml")}"
     vars = {
       grafana_hostname = "${var.grafana_hostname}"
@@ -9,14 +9,16 @@ resource "template_file" "prometheus_helm_values_tmpl" {
 }
 
 resource "local_file" "prometheus_helm_values" {
-    content = "${template_file.prometheus_helm_values_tmpl.rendered}"
+    content = "${data.template_file.prometheus_helm_values_tmpl.rendered}"
     filename = "${path.module}/resources/prometheus-operator.values.yaml"
+    depends_on = [data.template_file.prometheus_helm_values_tmpl]
+
 }
 
 resource "helm_release" "prometheus-operator" {
     name  = "prom"
     chart = "stable/prometheus-operator"
-# use if needed not last version    
+# use if needed not last version
 #    version = var.helm_prometheus_version
     namespace = "monitoring"
 
