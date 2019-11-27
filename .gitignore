@@ -6,4 +6,16 @@
 *.tfstate.*
 
 # .tfvars files
-*.tfvars
+
+#.env
+.env
+.export
+
+#credentials
+terraform-admin.json
+
+# Local bkp
+local_bkp
+
+#macOS
+.DS_Store
