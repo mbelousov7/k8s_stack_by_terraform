@@ -13,6 +13,7 @@
 
 #credentials
 terraform-admin.json
+mbelousov-terraform-*.json
 
 # Local bkp
 local_bkp
