@@ -75,11 +75,19 @@ resource "null_resource" "configure_kubectl" {
 
 module "helm_ingress" {
   source = "./modules/helm_ingress"
+#  depends_on = ["google_container_cluster.cluster"]
 }
 
 module "helm_loki" {
   source = "./modules/helm_loki"
 }
+
+
+
+
+
+
+
 
 module "helm_prometheus" {
   source = "./modules/helm_prometheus"

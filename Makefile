@@ -1,19 +1,21 @@
-include .env
+#include .env
 
-export TF_ADMIN
-export TF_CREDS
-export TF_VAR_project
-export TF_VAR_location
-export TF_VAR_kubernetes_version
-export TF_VAR_password
-export TF_VAR_file_account
+export TF_WORKSPACE=prod2
+export GCP=mbelousov
+export TF_ADMIN=${GCP}-terraform-${TF_WORKSPACE}
+export TF_CREDS=${TF_ADMIN}.json
+export TF_VAR_project=${TF_ADMIN}
+export TF_VAR_location="us-east1-b"
+export TF_VAR_kubernetes_version="1.14.8-gke.17"
+export TF_VAR_grafana_password="P@S;p"
+export TF_VAR_file_account=${TF_CREDS}
 
 
 init:
 	terraform init
 
 apply:
-	terraform apply -var-file=terraform.tfvars
+	env && terraform apply -var-file=$(TF_ADMIN).tfvars
 
 plan:
 	terraform plan -var-file=terraform.tfvars
