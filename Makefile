@@ -4,6 +4,7 @@ include .env-$(ENV)
 export TF_VAR_file_account
 export TF_VAR_project
 export TF_VAR_grafana_password
+export TF_VAR_location
 
 VARS=variables/mbelousov-terraform-$(ENV).tfvars
 init:
