@@ -8,9 +8,10 @@ gcloud auth application-default login
 
 2. Create a new project
 
+export ENV=stage
 export TF_VAR_billing_account=YOUR_BILLING_ACCOUNT_ID
-export TF_ADMIN=${USER}-terraform
-export TF_CREDS=terraform-admin.json
+export TF_ADMIN=${USER}-terraform-${ENV}
+export TF_CREDS=terraform-admin-${ENV}.json
 gcloud projects create ${TF_ADMIN} \
   --set-as-default
 gcloud beta billing projects link ${TF_ADMIN} \
@@ -42,7 +43,16 @@ gcloud services enable monitoring.googleapis.com
 gcloud services enable container.googleapis.com
 gcloud services enable compute.googleapis.com
 
-# Run
+##Makefile
+export ENV=stage
+make init
+make plan
+make apply
+make destroy
+
+
+##TERRAFORM
+#Run
 terraform init
 terraform apply -var-file=terraform.tfvars
 
@@ -55,7 +65,8 @@ terraform destroy -auto-approve \
 terraform destroy -auto-approve
 
 #To do
-1. Makefile
+1. Makefile +Done
 2. modules depending
 3. module for gke project, account etc
 4. add grafana ds using provider
+5. add module firewall for gcp
