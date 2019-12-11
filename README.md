@@ -26,15 +26,15 @@ gcloud beta billing projects link ${GCP_PROJECT_ID} \
 
 
 3. Create the Terraform service account
-gcloud iam service-accounts create terraform \
+gcloud iam service-accounts create terraform-${ENV} \
   --display-name "Terraform admin account"
 
 gcloud iam service-accounts keys create ${TF_CREDS} \
-  --iam-account terraform@${GCP_PROJECT_ID}.iam.gserviceaccount.com
+  --iam-account terraform-${ENV}@${GCP_PROJECT_ID}.iam.gserviceaccount.com
 
 4. Grant the service account permission
 gcloud projects add-iam-policy-binding ${GCP_PROJECT_ID} \
-  --member serviceAccount:terraform@${GCP_PROJECT_ID}.iam.gserviceaccount.com \
+  --member serviceAccount:terraform-${ENV}@${GCP_PROJECT_ID}.iam.gserviceaccount.com \
   --role roles/owner
 
 5. Any actions that Terraform performs require that the API be enabled to do so. In this guide, Terraform requires the following:
