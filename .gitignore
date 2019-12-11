@@ -12,7 +12,7 @@
 .export
 
 #credentials
-mbelousov-terraform-*.json
+*.json
 
 # Local bkp
 local_bkp
