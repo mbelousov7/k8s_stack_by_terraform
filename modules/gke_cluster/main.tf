@@ -34,7 +34,6 @@ resource "google_container_cluster" "cluster" {
       pool = "init"
     }
 
-    tags = ["dev", "work", "epam", "vpn"]
   }
 
   addons_config {

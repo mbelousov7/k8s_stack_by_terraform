@@ -32,23 +32,33 @@ resource "google_project_service" "service" {
 
 #Test account check
 resource "google_compute_network" "our_development_network" {
-  name = "devnetwork"
+  name = "terraform-network-${terraform.workspace}"
   auto_create_subnetworks = false
 }
 
 data "google_client_config" "current" {}
 
+module "gke_cluster" {
+  source = "./modules/gke_cluster"
+  project = var.project
+  location = var.location
+  cluster_name = "gke-cluster-${terraform.workspace}"
+}
+
 provider "kubernetes" {
   version = "~> 1.7.0"
   load_config_file       = false
-  host                   = google_container_cluster.cluster.endpoint
+#  host                   = google_container_cluster.cluster.endpoint
+#  cluster_ca_certificate = base64decode(google_container_cluster.cluster.master_auth[0].cluster_ca_certificate)
+  host                   = module.gke_cluster.endpoint
+  cluster_ca_certificate = module.gke_cluster.cluster_ca_certificate
   token                  = data.google_client_config.current.access_token
-  cluster_ca_certificate = base64decode(google_container_cluster.cluster.master_auth[0].cluster_ca_certificate)
 }
 
 
 module "helm_init" {
   source = "./modules/helm_init"
+  cluster_name = module.gke_cluster.name
 }
 
 #HELM config
@@ -58,35 +68,39 @@ provider "helm" {
   namespace       = "kube-system"
 
   kubernetes {
-    host                   = "${google_container_cluster.cluster.endpoint}"
+    host                   = module.gke_cluster.endpoint
     token                  = "${data.google_client_config.current.access_token}"
-    client_certificate     = "${base64decode(google_container_cluster.cluster.master_auth.0.client_certificate)}"
-    client_key             = "${base64decode(google_container_cluster.cluster.master_auth.0.client_key)}"
-    cluster_ca_certificate = "${base64decode(google_container_cluster.cluster.master_auth.0.cluster_ca_certificate)}"
+    client_certificate     = module.gke_cluster.client_certificate
+    client_key             = module.gke_cluster.client_key
+    cluster_ca_certificate = module.gke_cluster.cluster_ca_certificate
   }
 }
 
 module "helm_ingress" {
   source = "./modules/helm_ingress"
-#  depends_on = ["google_container_cluster.cluster"]
+  tiller = module.helm_init.tiller
 }
 
-module "helm_loki" {
-  source = "./modules/helm_loki"
-}
+#module "helm_loki" {
+#  source = "./modules/helm_loki"
+#  grafana_hostname = var.loki_hostname
+#  grafana_password = var.grafana_password
+#  tiller = module.helm_init.tiller
+#}
 
 
 module "helm_prometheus" {
   source = "./modules/helm_prometheus"
   grafana_hostname = var.grafana_hostname
   grafana_password = var.grafana_password
+  tiller = module.helm_init.tiller
 #  helm_prometheus_version = var.helm_prometheus_version
 }
 
 # configure kubectl with the credentials of the GKE cluster
 resource "null_resource" "configure_kubectl" {
   provisioner "local-exec" {
-    command = "gcloud beta container clusters get-credentials ${google_container_cluster.cluster.name} --region ${var.location} --project ${var.project}"
+    command = "gcloud beta container clusters get-credentials gke-cluster-${terraform.workspace} --region ${var.location} --project ${var.project}"
 
     # Use environment variables to allow custom kubectl config paths
     environment = {
@@ -95,7 +109,7 @@ resource "null_resource" "configure_kubectl" {
   }
 
   depends_on = [
-    google_container_cluster.cluster,
+    module.gke_cluster,
     module.helm_init
   ]
 }
