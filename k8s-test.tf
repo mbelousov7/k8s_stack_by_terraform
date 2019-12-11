@@ -1,13 +1,13 @@
 resource "kubernetes_namespace" "laba" {
   metadata {
-    name = "laba"
+    name = "laba-${terraform.workspace}"
   }
 }
 #pod tests
 resource "kubernetes_pod" "nginx" {
   metadata {
     name = "nginx-example"
-    namespace = "laba"
+    namespace = "laba-${terraform.workspace}"
     labels = {
       App = "nginx"
     }
@@ -30,7 +30,7 @@ resource "kubernetes_pod" "nginx" {
 resource "kubernetes_ingress" "example_ingress" {
   metadata {
     name = "example-ingress"
-    namespace = "laba"
+    namespace = "laba-${terraform.workspace}"
   }
 
   spec {
@@ -53,7 +53,7 @@ resource "kubernetes_ingress" "example_ingress" {
 resource "kubernetes_service" "example" {
   metadata {
     name = "example-service"
-    namespace = "laba"
+    namespace = "laba-${terraform.workspace}"
   }
   spec {
     selector = {

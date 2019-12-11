@@ -8,12 +8,11 @@
 # .tfvars files
 
 #.env
-.env
+.env*
 .export
 
 #credentials
-terraform-admin.json
-mbelousov-terraform-*.json
+*.json
 
 # Local bkp
 local_bkp

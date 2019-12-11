@@ -5,7 +5,8 @@
 
 resource "google_container_cluster" "cluster" {
 
-  name        = var.cluster_name
+  #name        = var.cluster_name
+  name       = "gke-cluster-${terraform.workspace}"
   description = var.description
   project    = var.project
   location   = var.location
@@ -34,7 +35,7 @@ resource "google_container_cluster" "cluster" {
       pool = "init"
     }
 
-    tags = ["dev", "work", "epam", "vpn"]
+    tags = ["${terraform.workspace}", "work", "epam", "vpn"]
   }
 
   addons_config {

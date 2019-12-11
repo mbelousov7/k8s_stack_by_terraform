@@ -13,11 +13,11 @@ resource "helm_release" "grafana" {
     }
     set {
      name  = "adminPassword"
-     value = "strongpassword"
+     value = "${var.grafana_password}"
     }
     set {
      name  = "ingress.hosts"
-     value = "{grafanaloki.terraformk8s.com}"
+     value = "${var.grafana_hostname}"
     }
  }
 

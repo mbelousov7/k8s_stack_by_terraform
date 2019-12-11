@@ -25,3 +25,14 @@ resource "kubernetes_cluster_role_binding" "tiller" {
     namespace = "kube-system"
   }
 }
+
+#for module dependency
+variable "cluster_name" {
+  description = "The name of the Kubernetes cluster."
+  type        = string
+}
+
+output "tiller" {
+  description = "The name helm tiller instance"
+  value = kubernetes_service_account.tiller.id
+}

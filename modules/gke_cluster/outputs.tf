@@ -1,9 +1,8 @@
-output "cluster_location" {
-  value = google_container_cluster.cluster.location
-}
+output "name" {
+  # This may seem redundant with the `name` input, but it serves an important
+  # purpose. Terraform won't establish a dependency graph without this to interpolate on.
+  description = "The name of the cluster master. This output is used for interpolation with node pools, other modules."
 
-output "cluster_name" {
-  description = "The name of the cluster master"
   value = google_container_cluster.cluster.name
 }
 
@@ -12,13 +11,13 @@ output "master_version" {
   value       = google_container_cluster.cluster.master_version
 }
 
-output "cluster_endpoint" {
+output "endpoint" {
   description = "The IP address of the cluster master."
   sensitive   = true
   value       = google_container_cluster.cluster.endpoint
 }
 
-####
+# The following outputs allow authentication and connectivity to the GKE Cluster.
 output "client_certificate" {
   description = "Public certificate used by clients to authenticate to the cluster endpoint."
   value       = base64decode(google_container_cluster.cluster.master_auth[0].client_certificate)
