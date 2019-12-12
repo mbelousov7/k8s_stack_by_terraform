@@ -34,5 +34,5 @@ variable "cluster_name" {
 
 output "tiller" {
   description = "The name helm tiller instance"
-  value = kubernetes_service_account.tiller.id
+  value = kubernetes_cluster_role_binding.tiller.id
 }

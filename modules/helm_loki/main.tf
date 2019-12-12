@@ -11,14 +11,14 @@ resource "helm_release" "grafana" {
      name  = "ingress.enabled"
      value = "true"
     }
-    set {
-     name  = "adminPassword"
-     value = "${var.grafana_password}"
-    }
-    set {
-     name  = "ingress.hosts"
-     value = "${var.grafana_hostname}"
-    }
+#    set {
+#     name  = "adminPassword"
+#     value = "${var.grafana_password}"
+#    }
+#    set {
+#     name  = "ingress.hosts"
+#     value = "${var.grafana_hostname}"
+#    }
  }
 
 resource "helm_release" "loki" {
