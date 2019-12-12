@@ -62,6 +62,7 @@ module "helm_init" {
 }
 
 #HELM config
+
 provider "helm" {
   install_tiller  = true
   service_account = "tiller"
@@ -81,12 +82,12 @@ module "helm_ingress" {
   tiller = module.helm_init.tiller
 }
 
-#module "helm_loki" {
-#  source = "./modules/helm_loki"
-#  grafana_hostname = var.loki_hostname
-#  grafana_password = var.grafana_password
-#  tiller = module.helm_init.tiller
-#}
+module "helm_loki" {
+  source = "./modules/helm_loki"
+  grafana_hostname = var.loki_hostname
+  grafana_password = var.grafana_password
+  tiller = module.helm_init.tiller
+}
 
 
 module "helm_prometheus" {
@@ -109,7 +110,6 @@ resource "null_resource" "configure_kubectl" {
   }
 
   depends_on = [
-    module.gke_cluster,
-    module.helm_init
+    module.gke_cluster
   ]
 }
