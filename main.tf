@@ -5,7 +5,6 @@ terraform {
 provider "google" {
   project = var.project
   region  = var.location
-#  credentials = "mbelousov-terraform-prod2.json"
   credentials = "${file("${var.file_account}")}"
   scopes = [
     # Default scopes
@@ -48,8 +47,6 @@ module "gke_cluster" {
 provider "kubernetes" {
   version = "~> 1.7.0"
   load_config_file       = false
-#  host                   = google_container_cluster.cluster.endpoint
-#  cluster_ca_certificate = base64decode(google_container_cluster.cluster.master_auth[0].cluster_ca_certificate)
   host                   = module.gke_cluster.endpoint
   cluster_ca_certificate = module.gke_cluster.cluster_ca_certificate
   token                  = data.google_client_config.current.access_token
@@ -95,7 +92,6 @@ module "helm_prometheus" {
   grafana_hostname = var.grafana_hostname
   grafana_password = var.grafana_password
   tiller = module.helm_init.tiller
-#  helm_prometheus_version = var.helm_prometheus_version
 }
 
 # configure kubectl with the credentials of the GKE cluster
