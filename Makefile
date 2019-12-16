@@ -10,14 +10,14 @@ export TF_VAR_location
 VARS=variables/terraform-$(ENV).tfvars
 
 init:
-	terraform init
+	terraform workspace select $(ENV) && terraform init
 
 apply:
-	env && terraform apply -var-file="$(VARS)" -auto-approve
+	terraform workspace select $(ENV) && terraform apply -var-file="$(VARS)" -auto-approve
 
 plan:
-	env && terraform plan -var-file="$(VARS)"
+	terraform workspace select $(ENV) && terraform plan -var-file="$(VARS)"
 
 destroy:
-	terraform destroy -auto-approve -target=module.helm_loki -target=module.helm_prometheus -target=module.helm_ingress -var-file="$(VARS)"
+	erraform workspace select $(ENV) && terraform destroy -auto-approve -target=module.helm_loki -target=module.helm_prometheus -target=module.helm_ingress -var-file="$(VARS)"
 	terraform destroy -auto-approve -var-file="$(VARS)"
